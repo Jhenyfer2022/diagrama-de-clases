@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lienzo</title>
+  <%- include("head.ejs")%>
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+        background-color: white;
+      }
+    </style>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.3/p5.js"></script>
+    <!-- <script src="../addons/p5.sound.js"></script> -->
+    <script src="../sketch.js"></script>
+    <script src="https://cdn.socket.io/4.5.3/socket.io.min.js"
+      integrity="sha384-WPFUvHkB1aHA5TDSZi6xtDgkF0wXJcIIxXhC6h8OT8EH3fC5PWro5pWJ1THjcfEi"
+      crossorigin="anonymous"></script>
+    <%- include("navbar.ejs")%>
+
+      <div class="bg-gray-400 px-4 md:px-0 mx-auto ml-2 flex justify-start gap-2">
+
+        <div class="text-center">
+          <img src="/images/clase2.png" alt="Clase"
+            class="mt-4 mb-2 w-19 h-16 rounded-lg cursor-pointer transition duration-200"
+            onclick="prepararParaColocarPersona()">
+          <h3 class="mt-2">Clases</h3>
+        </div>
+
+
+        <div class="text-center">
+          <img src="/images/composicion.png" alt="Composicion"
+            class="mt-4 mb-2 w-19 h-16 rounded-lg cursor-pointer transition duration-200"
+            onclick="prepararParaColocarRelacion()">
+          <h3 class="mt-2">Composicion</h3>
+        </div>
+
+
+        <div class="text-center">
+          <img src="/images/asociacion3.png" alt="Asociacion"
+            class="mt-4 mb-2 w-19 h-16 rounded-lg cursor-pointer transition duration-200"
+            onclick="prepararParaColocarAsociacion()">
+          <h3 class="mt-2">Asociacion</h3>
+        </div>
+
+
+
+        <div class="text-center">
+          <img src="/images/agregacion.png" alt="Agregacion"
+            class="mt-4 mb-2 w-19 h-16 rounded-lg cursor-pointer transition duration-200"
+            onclick="prepararParaColocarDatabase()">
+          <h3 class="mt-2">Agregacion</h3>
+        </div>
+
+        <div class="text-center">
+          <img src="/images/generalizacion.png" alt="Realizacion"
+            class="mt-4 mb-2 w-19 h-16 rounded-lg cursor-pointer transition duration-200"
+            onclick="prepararParaColocarRealizacion()">
+          <h3 class="mt-2">Realizacion</h3>
+        </div>
+
+
+        <div class="text-center">
+          <img src="/images/herencia.png" alt="Herencia"
+            class="mt-4 mb-2 w-19 h-16 rounded-lg cursor-pointer transition duration-200"
+            onclick="prepararParaColocarInherencia()">
+          <h3 class="mt-2">Herencia</h3>
+        </div>
+
+        <div class="text-center">
+          <img src="/images/dependencia.png" alt="Dependencia"
+            class="mt-4 mb-2 w-19 h-16 rounded-lg cursor-pointer transition duration-200"
+            onclick="prepararParaColocarDependencia()">
+          <h3 class="mt-2">Dependencia</h3>
+        </div>
+
+        <div class="text-center">
+          <img src="/images/muchos.png" alt="muchos"
+            class="mt-4 mb-2 w-19 h-16 rounded-lg cursor-pointer transition duration-200"
+            onclick="prepararParaColocarMuchosAMuchos()">
+          <h3 class="mt-2">Muchos a Muchos</h3>
+        </div>
+
+
+
+
+        <button onclick="mostrarModalImportar()" class="mt-4 mb-2 py-2 px-6
+    rounded-lg bg-orange-600 text-white hover:bg-orange-500
+    transition duration-200">Importar</button>
+
+        <button onclick="exportar()" class="mt-4 mb-2 py-2 px-6
+    rounded-lg bg-orange-600 text-white hover:bg-orange-500
+    transition duration-200">Exportar</button>
+        <button onclick="eliminarForma()" class="mt-4 mb-2 py-2 px-6
+    rounded-lg bg-orange-600 text-white hover:bg-orange-500
+    transition duration-200">Delete</button>
+        <button onclick="mostrarModalPassword()" class="mt-4 mb-2 py-2 px-6
+    rounded-lg bg-orange-600 text-white hover:bg-orange-500
+    transition duration-200">Contraseña</button>
+        <button onclick="volver()" class="mt-4 mb-2 py-2 px-6
+    rounded-lg bg-orange-600 text-white hover:bg-orange-500
+    transition duration-200">Salir</button>
+      </div>
+</head>
+
+<body>
+  <!-- modal Importar -->
+  <div
+    class="modalImportar h-screen w-full fixed left-0 top-0 flex justify-center items-center bg-orange bg-opacity-50 hidden">
+    <!-- modal -->
+    <div class="bg-orange-600 rounded shadow-lg w-10/12 md:w-1/3">
+      <!-- modal header -->
+      <div class="border-b px-4 py-2 flex justify-between items-center">
+        <h3 class="font-semibold text-white text-lg">Importar</h3>
+        <button onclick="ocultarModalImportar()" class="text-white close-modal">X</button>
+      </div>
+      <!-- modal body -->
+      <div class="p-3 text-white">
+        "Arrastre el archivo aqui"
+        <input type="file" id="campoparasubirarchivo">
+      </div>
+      <div class="flex justify-end items-center w-100 border-t p-3">
+        <button onclick="ocultarModalImportar()"
+          class="bg-gray-700 hover:bg-gray-800 px-3 py-1 rounded text-white mr-1 close-modal">Cancel</button>
+        <button onclick="importar()" class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-white">Ok</button>
+      </div>
+    </div>
+  </div>
+  <!-- modal password -->
+  <div
+    class="modalPass h-screen w-full fixed left-0 top-0 flex justify-center items-center bg-orange bg-opacity-50 hidden">
+    <!-- modal -->
+    <div class="bg-orange-600 rounded shadow-lg w-10/12 md:w-1/3">
+      <!-- modal header -->
+      <div class="border-b px-4 py-2 flex justify-between items-center">
+        <h3 class="font-semibold text-white text-lg">Compartir Password</h3>
+        <button onclick="ocultarModalPassword()" class="text-white close-modal">X</button>
+      </div>
+      <!-- modal body -->
+      <div class="p-3">
+        <label class="block mb-2 text-xs font-bold tracking-wide text-white uppercase">
+          Password de la sala
+        </label>
+        <input value="<%= board.passw %>" class="block w-full px-4 py-3 mb-3 leading-tight text-gray-700 bg-gray-200 border border-gray-200 rounded
+        appearance-none focus:outline-none focus:bg-white type=" text="" name="" id="">
+      </div>
+    </div>
+  </div>
+  <!-- modal Editar -->
+  <div
+    class="modaleditarfigura h-screen w-full fixed left-0 top-0 flex justify-center items-center bg-orange bg-opacity-50 hidden">
+    <!-- modal -->
+    <div class="bg-orange-600 rounded shadow-lg w-10/12 md:w-1/3">
+      <!-- modal header -->
+      <div class="border-b px-4 py-2 flex justify-between items-center">
+        <h3 class="font-semibold text-white text-lg">Editar</h3>
+        <button onclick="ocultarModalEditarFigura()" class="text-white close-modal">X</button>
+      </div>
+      <!-- modal body -->
+      <div class="p-3">
+        <div class="w-full px-3 mb-6">
+          <label class="block mb-2 text-xs font-bold tracking-wide text-white">
+            Nombre
+          </label>
+          <input class="block w-full px-4 py-3 mb-3 leading-tight text-gray-700 bg-gray-200
+     border border-gray-200 rounded appearance-none focus:outline-none focus:bg-white" id="campoparacambiarnombre"
+            type="text" placeholder="{nombre}">
+          <label>
+            <span class="block mb-2 text-xs font-bold tracking-wide text-white uppercase">
+              Atributos
+            </span>
+            <textarea id="campoparacambiaratributo" class="block w-full px-4 py-3 mt-1
+               mb-3 text-gray-700 bg-gray-200 rounded form-textarea focus:outline-none" rows="4"
+              placeholder="{atributos}"></textarea>
+            <span class="block mb-2 text-xs font-bold tracking-wide text-white uppercase">
+              Metodos
+            </span>
+            <textarea id="campoparacambiarmetodo" class="block w-full px-4 py-3 mt-1
+           mb-3 text-gray-700 bg-gray-200 rounded form-textarea focus:outline-none" rows="4"
+              placeholder="{metodos}"></textarea>
+            
+            <label>
+            </label>
+        </div>
+      </div>
+      <div class="flex justify-end items-center w-100 border-t p-3">
+        <button onclick="ocultarModalEditarFigura()"
+          class="bg-gray-700 hover:bg-gray-800 px-3 py-1 rounded text-white mr-1 close-modal">Cancel</button>
+        <button onclick="cambiarTextoDeFigura()"
+          class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-white">Ok</button>
+      </div>
+    </div>
+  </div>
+  <!-- modal Editar -->
+  <div
+    class="modaleditarmultiplicidad h-screen w-full fixed left-0 top-0 flex justify-center items-center bg-orange bg-opacity-50 hidden">
+
+    <div class="bg-orange-600 rounded shadow-lg w-10/12 md:w-1/3">
+
+      <div class="border-b px-4 py-2 flex justify-between items-center">
+        <h3 class="font-semibold text-white text-lg">Editar</h3>
+        <button onclick="ocultarModalEditarMultiplicidad()" class="text-white close-modal">X</button>
+      </div>
+
+      <div class="p-3">
+        <div class="w-full px-3 mb-6">
+
+          <label>
+            <label class="block mb-2 text-xs font-bold tracking-wide text-white">
+              Multiplicidad1
+            </label>
+            <input class="block w-full px-4 py-3 mb-3 leading-tight text-gray-700 bg-gray-200
+              border border-gray-200 rounded appearance-none focus:outline-none focus:bg-white"
+              id="campoparacambiarmultiplicidad1" type="text" placeholder="">
+            <label class="block mb-2 text-xs font-bold tracking-wide text-white">
+              Multiplicidad2
+            </label>
+          </label>
+          <input class="block w-full px-4 py-3 mb-3 leading-tight text-gray-700 bg-gray-200
+                border border-gray-200 rounded appearance-none focus:outline-none focus:bg-white"
+            id="campoparacambiarmultiplicidad2" type="text" placeholder="">
+        </div>
+      </div>
+
+      <div class="flex justify-end items-center w-100 border-t p-3">
+        <button onclick="ocultarModalEditarMultiplicidad()"
+          class="bg-gray-700 hover:bg-gray-800 px-3 py-1 rounded text-white mr-1 close-modal">Cancel</button>
+        <button onclick="cambiarTextoDeLinea()"
+          class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-white">Ok</button>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  const $canvas = document.querySelector("#canvas"),
+    $btnDescargar = document.querySelector("#btnDescargar")
+  const modalEditarFigura = document.querySelector('.modaleditarfigura')
+  const modalEditarMultiplicidad = document.querySelector('.modaleditarmultiplicidad')
+  const campoParaCambiarNombre = document.getElementById('campoparacambiarnombre')
+  const campoParaCambiarMultiplicidad = document.getElementById('campoparacambiarmultiplicidad')
+  const campoParaCambiarMultiplicidad1 = document.getElementById('campoparacambiarmultiplicidad1')
+  const campoParaCambiarMultiplicidad2 = document.getElementById('campoparacambiarmultiplicidad2')
+  const campoParaCambiarAtributo = document.getElementById('campoparacambiaratributo')
+  const campoParaCambiarMetodo = document.getElementById('campoparacambiarmetodo')
+  const modalImportar = document.querySelector('.modalImportar')
+  const campoParaSubirArchivo = document.getElementById('campoparasubirarchivo')
+  const modalParaMostrarPassword = document.querySelector('.modalPass')
+
+  window.onload = function inicio() {
+    var room = window.location.href.split('/')[4]
+    axios.get(`/lienzoo/${room}`).then(res => {
+      let objetosRecuperados = res.data
+      console.log(objetosRecuperados[0]);
+      draw2(objetosRecuperados[0], objetosRecuperados[1])
+    });
+  }
+
+
+  function mostrarModalEditarFigura() {
+    modalEditarFigura.classList.remove('hidden')
+    campoParaCambiarNombre.value = elementoParaEditar.getNombre
+    campoParaCambiarAtributo.value = elementoParaEditar.getAtributo
+    campoParaCambiarMetodo.value = elementoParaEditar.getMetodo
+   // campoParaCambiarMultiplicidad.value = elementoParaEditar.getMultiplicidad
+  }
+  function mostrarModalEditarLinea() {
+    modalEditarMultiplicidad.classList.remove('hidden')
+    campoParaCambiarMultiplicidad1.value = lineaParaEditar.getMultiplicidad1
+    campoParaCambiarMultiplicidad2.value = lineaParaEditar.getMultiplicidad2
+  }
+
+
+  function ocultarModalEditarFigura() {
+    modalEditarFigura.classList.add('hidden')
+  }
+  function ocultarModalEditarMultiplicidad() {
+    modalEditarMultiplicidad.classList.add('hidden')
+  }
+
+  function mostrarModalImportar() {
+    modalImportar.classList.remove('hidden')
+  }
+
+  function ocultarModalImportar() {
+    modalImportar.classList.add('hidden')
+  }
+
+  function mostrarModalPassword() {
+    modalParaMostrarPassword.classList.remove('hidden')
+  }
+
+  function ocultarModalPassword() {
+    modalParaMostrarPassword.classList.add('hidden')
+  }
+
+  function prepararParaColocarRelacion() {
+    nivelDeDiagrama = 1
+    preparadoParaColocarElemento = !preparadoParaColocarElemento
+    elementoQueSeColocara = 'composicion'
+  }
+  function prepararParaColocarAsociacion() {
+    nivelDeDiagrama = 1
+    preparadoParaColocarElemento = !preparadoParaColocarElemento
+    elementoQueSeColocara = 'asociacion'
+  }
+  function prepararParaColocarNuevaAsociacion() {
+    nivelDeDiagrama = 1
+    preparadoParaColocarElemento = !preparadoParaColocarElemento
+    elementoQueSeColocara = 'nuevaasociacion'
+  }
+
+  function prepararParaColocarSistema(esAzul) {
+    preparadoParaColocarElemento = !preparadoParaColocarElemento
+    if (esAzul) {
+      elementoQueSeColocara = 'sistema en diseño'
+    } else {
+      elementoQueSeColocara = 'sistema'
+    }
+  }
+  function volver() {
+    window.history.back(); // Regresa a la página anterior
+  }
+  function prepararParaColocarPersona() {
+    preparadoParaColocarElemento = !preparadoParaColocarElemento
+    elementoQueSeColocara = 'persona'
+  }
+
+  function prepararParaColocarDatabase() {
+    nivelDeDiagrama = 1
+    preparadoParaColocarElemento = !preparadoParaColocarElemento
+    elementoQueSeColocara = 'agregacion'
+  }
+
+  function prepararParaColocarMobile() {
+    preparadoParaColocarElemento = !preparadoParaColocarElemento
+    elementoQueSeColocara = 'mobile'
+  }
+
+  function prepararParaColocarRealizacion() {
+    nivelDeDiagrama = 1
+    preparadoParaColocarElemento = !preparadoParaColocarElemento
+    elementoQueSeColocara = 'realizacion'
+  }
+  function prepararParaColocarInherencia() {
+    nivelDeDiagrama = 1
+    preparadoParaColocarElemento = !preparadoParaColocarElemento
+    elementoQueSeColocara = 'inherencia'
+  }
+  function prepararParaColocarDependencia() {
+    nivelDeDiagrama = 1
+    preparadoParaColocarElemento = !preparadoParaColocarElemento
+    elementoQueSeColocara = 'dependencia'
+  }
+  function prepararParaColocarMuchosAMuchos() {
+    nivelDeDiagrama = 1
+    preparadoParaColocarElemento = !preparadoParaColocarElemento
+    elementoQueSeColocara = 'muchos_a_muchos'
+  }
+  function prepararParaColocarWeb() {
+    preparadoParaColocarElemento = !preparadoParaColocarElemento
+    elementoQueSeColocara = 'web'
+  }
+
+  function prepararParaColocarComponent() {
+    preparadoParaColocarElemento = !preparadoParaColocarElemento
+    elementoQueSeColocara = 'component'
+  }
+
+  function prepararParaColocarContainer() {
+    preparadoParaColocarElemento = !preparadoParaColocarElemento
+    elementoQueSeColocara = 'container'
+  }
+
+  function cambiarTextoDeFigura() {
+    elementoParaEditar.setNombre = campoParaCambiarNombre.value
+    elementoParaEditar.setAtributo = campoParaCambiarAtributo.value
+    elementoParaEditar.setMetodo = campoParaCambiarMetodo.value
+  //  elementoParaEditar.setMultiplicidad = campoParaCambiarMultiplicidad.value
+    ocultarModalEditarFigura()
+    socket.emit('mouse', vectorDeEntidades, vectorDeLineas)
+  }
+  function cambiarTextoDeLinea() {
+
+    lineaParaEditar.setMultiplicidad1 = campoParaCambiarMultiplicidad1.value
+    lineaParaEditar.setMultiplicidad2 = campoParaCambiarMultiplicidad2.value
+    ocultarModalEditarMultiplicidad()
+    socket.emit('mouse', vectorDeEntidades, vectorDeLineas)
+  }
+  function exportar() {
+    // Normalize JSONB structure and add unique IDs
+    const vectorDeEntidades = (window.vectorDeEntidades || []).map((entity, index) => ({
+      ...entity,
+      id: index,
+      tamanoDeTextoNombre: entity.tamañoDeTextoNombre || 20,
+      tamanoDeTextoEstereotipo: entity.tamañoDeTextoEstereotipo || 10,
+      tamanoTextoMetodo: entity.tamañoTextoMetodo || 13,
+      tamanoDeTextoAtributo: entity.tamañoDeTextoAtributo || 13
+    }));
+    const vectorDeLineas = window.vectorDeLineas || [];
+    const vectorDescargar = [vectorDeEntidades, vectorDeLineas];
+
+    const zip = new JSZip();
+
+    // package.json
+    zip.file("package.json", `
+  {
+    "name": "uml-diagram",
+    "version": "1.0.0",
+    "scripts": {
+      "start": "ng serve",
+      "build": "ng build"
+    },
+    "dependencies": {
+      "@angular/animations": "^15.2.10",
+      "@angular/common": "^15.2.10",
+      "@angular/compiler": "^15.2.10",
+      "@angular/core": "^15.2.10",
+      "@angular/forms": "^15.2.10",
+      "@angular/platform-browser": "^15.2.10",
+      "@angular/platform-browser-dynamic": "^15.2.10",
+      "@angular/router": "^15.2.10",
+      "rxjs": "~7.8.1",
+      "tslib": "^2.6.2",
+      "zone.js": "~0.12.0"
+    },
+    "devDependencies": {
+      "@angular-devkit/build-angular": "^15.2.10",
+      "@angular/cli": "^15.2.10",
+      "@angular/compiler-cli": "^15.2.10",
+      "@types/node": "^20.11.30",
+      "typescript": "~4.9.5"
+    }
+  }
+    `.trim());
+
+    // angular.json
+    zip.file("angular.json", `
+  {
+    "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+    "version": 1,
+    "newProjectRoot": "projects",
+    "projects": {
+      "uml-diagram": {
+        "projectType": "application",
+        "root": "",
+        "sourceRoot": "src",
+        "prefix": "app",
+        "architect": {
+          "build": {
+            "builder": "@angular-devkit/build-angular:browser",
+            "options": {
+              "outputPath": "dist/uml-diagram",
+              "index": "src/index.html",
+              "main": "src/main.ts",
+              "polyfills": "src/polyfills.ts",
+              "tsConfig": "tsconfig.app.json",
+              "assets": ["src/favicon.ico", "src/assets"],
+              "styles": ["src/styles.css"],
+              "scripts": []
+            },
+            "configurations": {
+              "production": {
+                "budgets": [
+                  {
+                    "type": "initial",
+                    "maximumWarning": "500kb",
+                    "maximumError": "1mb"
+                  }
+                ],
+                "outputHashing": "all"
+              }
+            }
+          },
+          "serve": {
+            "builder": "@angular-devkit/build-angular:dev-server",
+            "options": {
+              "browserTarget": "uml-diagram:build"
+            },
+            "configurations": {
+              "production": {
+                "browserTarget": "uml-diagram:build:production"
+              }
+            }
+          }
+        }
+      }
+    },
+    "defaultProject": "uml-diagram"
+  }
+    `.trim());
+
+    // tsconfig.json
+    zip.file("tsconfig.json", `
+  {
+    "compileOnSave": false,
+    "compilerOptions": {
+      "baseUrl": "src",
+      "outDir": "./dist/out-tsc",
+      "sourceMap": true,
+      "declaration": false,
+      "downlevelIteration": true,
+      "experimentalDecorators": true,
+      "module": "es2020",
+      "moduleResolution": "node",
+      "importHelpers": true,
+      "target": "ES2022",
+      "useDefineForClassFields": false,
+      "typeRoots": ["node_modules/@types"],
+      "lib": ["es2020", "dom"]
+    }
+  }
+    `.trim());
+
+    // tsconfig.app.json
+    zip.file("tsconfig.app.json", `
+  {
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+      "outDir": "./dist/out-tsc/app",
+      "types": []
+    },
+    "files": [
+      "src/main.ts",
+      "src/polyfills.ts"
+    ],
+    "include": [
+      "src/**/*.d.ts",
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "src/test.ts",
+      "**/*.spec.ts"
+    ]
+  }
+    `.trim());
+
+    // src/index.html
+    zip.folder("src")?.file("index.html", `
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>UML Diagram</title>
+    <base href="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <app-root></app-root>
+  </body>
+  </html>
+    `.trim());
+
+    // src/main.ts
+    zip.folder("src")?.file("main.ts", `
+  import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+  import { AppModule } from './app/app.module';
+
+  platformBrowserDynamic().bootstrapModule(AppModule)
+    .catch(err => console.error(err));
+    `.trim());
+
+    // src/polyfills.ts
+    zip.folder("src")?.file("polyfills.ts", `
+  import 'zone.js';
+    `.trim());
+
+    // src/styles.css
+    zip.folder("src")?.file("styles.css", `
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+    `.trim());
+
+    // src/app/app.module.ts
+    zip.folder("src/app")?.file("app.module.ts", `
+  import { NgModule } from '@angular/core';
+  import { BrowserModule } from '@angular/platform-browser';
+  import { RouterModule, Routes } from '@angular/router';
+  import { FormsModule } from '@angular/forms';
+  import { AppComponent } from './app.component';
+  import { DiagramaComponent } from './componentes/diagrama/diagrama.component';
+  import { ClassDetailComponent } from './componentes/class-detail/class-detail.component';
+
+  const routes: Routes = [
+    { path: '', component: DiagramaComponent },
+    { path: 'class/:id', component: ClassDetailComponent }
+  ];
+
+  @NgModule({
+    declarations: [AppComponent, DiagramaComponent, ClassDetailComponent],
+    imports: [
+      BrowserModule,
+      FormsModule,
+      RouterModule.forRoot(routes)
+    ],
+    bootstrap: [AppComponent]
+  })
+  export class AppModule { }
+    `.trim());
+
+    // src/app/app.component.ts
+    zip.folder("src/app")?.file("app.component.ts", `
+  import { Component } from '@angular/core';
+
+  @Component({
+    selector: 'app-root',
+    template: '<router-outlet></router-outlet>',
+    styleUrls: ['./app.component.css']
+  })
+  export class AppComponent {}
+    `.trim());
+
+    // src/app/app.component.css
+    zip.folder("src/app")?.file("app.component.css", `
+  /* App component styles */
+    `.trim());
+
+    // src/app/servicios/diagramas.service.ts
+    zip.folder("src/app/servicios")?.file("diagramas.service.ts", `
+  import { Injectable } from '@angular/core';
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class DiagramasService {
+    private diagramData: [any[], any[]] = ${JSON.stringify(vectorDescargar)};
+
+    getDiagramas(): [any[], any[]] {
+      return this.diagramData;
+    }
+
+    getClassById(id: number): any {
+      return (this.diagramData[0] as any[]).find(entity => entity.id === id);
+    }
+  }
+    `.trim());
+
+    // src/app/componentes/diagrama/diagrama.component.ts
+    zip.folder("src/app/componentes/diagrama")?.file("diagrama.component.ts", `
+  import { Component, OnInit } from '@angular/core';
+  import { Router } from '@angular/router';
+  import { DiagramasService } from '../../servicios/diagramas.service';
+
+  @Component({
+    selector: 'app-diagrama',
+    templateUrl: './diagrama.component.html',
+    styleUrls: ['./diagrama.component.css']
+  })
+  export class DiagramaComponent implements OnInit {
+    figuras: any[] = [];
+    lineas: any[] = [];
+
+    constructor(private diagramasService: DiagramasService, private router: Router) {}
+
+    ngOnInit(): void {
+      const data = this.diagramasService.getDiagramas();
+      this.figuras = Array.isArray(data[0]) ? data[0] : [];
+      this.lineas = Array.isArray(data[1]) ? data[1] : [];
+    }
+
+    navigateToClass(id: number): void {
+      this.router.navigate(['/class', id]);
+    }
+  }
+    `.trim());
+
+    // src/app/componentes/diagrama/diagrama.component.html
+    zip.folder("src/app/componentes/diagrama")?.file("diagrama.component.html", `
+  <div style="position: relative; width: 1200px; height: 600px; border: 1px solid black;">
+    <!-- Class boxes -->
+    <div *ngFor="let figura of figuras"
+        [style.left.px]="figura.x"
+        [style.top.px]="figura.y"
+        [style.width.px]="figura.ancho"
+        [style.height.px]="figura.alto"
+        (click)="navigateToClass(figura.id)"
+        [style.font-size.px]="figura.tamanoDeTextoNombre"
+        style="position: absolute; background: lightblue; border: 1px solid #000; padding: 10px; box-sizing: border-box; cursor: pointer;">
+      <h3>{{ figura.nombre !== '{nombre}' ? figura.nombre : 'Sin nombre' }}</h3>
+      <p [style.font-size.px]="figura.tamanoDeTextoAtributo">{{ figura.atributo !== '{atributo}' ? figura.atributo : 'Sin atributos' }}</p>
+      <p [style.font-size.px]="figura.tamanoTextoMetodo">{{ figura.metodo !== '{metodo}' ? figura.metodo : 'Sin métodos' }}</p>
+      <p [style.font-size.px]="figura.tamanoDeTextoEstereotipo">{{ figura.estereotipo || '' }}</p>
+    </div>
+    <!-- Association lines -->
+    <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+      <line *ngFor="let linea of lineas"
+            [attr.x1]="linea.figura1.centroX"
+            [attr.y1]="linea.figura1.centroY"
+            [attr.x2]="linea.figura2.centroX"
+            [attr.y2]="linea.figura2.centroY"
+            stroke="black"
+            stroke-width="2" />
+    </svg>
+  </div>
+    `.trim());
+
+    // src/app/componentes/diagrama/diagrama.component.css
+    zip.folder("src/app/componentes/diagrama")?.file("diagrama.component.css", `
+  div {
+    font-family: Arial, sans-serif;
+  }
+  div:hover {
+    background: #add8e6;
+  }
+    `.trim());
+
+    // src/app/componentes/class-detail/class-detail.component.ts
+    zip.folder("src/app/componentes/class-detail")?.file("class-detail.component.ts", `
+  import { Component, OnInit } from '@angular/core';
+  import { ActivatedRoute } from '@angular/router';
+  import { DiagramasService } from '../../servicios/diagramas.service';
+
+  @Component({
+    selector: 'app-class-detail',
+    templateUrl: './class-detail.component.html',
+    styleUrls: ['./class-detail.component.css']
+  })
+  export class ClassDetailComponent implements OnInit {
+    classData: any = null;
+    attributes: string[] = [];
+    attributeValues: { [key: string]: string } = {};
+
+    constructor(
+      private route: ActivatedRoute,
+      private diagramasService: DiagramasService
+    ) {}
+
+    ngOnInit(): void {
+      const id = Number(this.route.snapshot.paramMap.get('id'));
+      this.classData = this.diagramasService.getClassById(id);
+      if (this.classData && this.classData.atributo && this.classData.atributo !== '{atributo}') {
+        // Handle atributo as string or array
+        this.attributes = Array.isArray(this.classData.atributo)
+          ? this.classData.atributo
+          : typeof this.classData.atributo === 'string'
+          ? this.classData.atributo.split(',').map((attr: string) => attr.trim())
+          : [];
+        // Initialize attribute values
+        this.attributes.forEach(attr => {
+          this.attributeValues[attr] = '';
+        });
+      }
+      // Fallback attributes if none defined
+      if (!this.attributes.length) {
+        this.attributes = ['id', 'name']; // Default attributes
+        this.attributes.forEach(attr => {
+          this.attributeValues[attr] = '';
+        });
+      }
+    }
+
+    goBack(): void {
+      window.history.back();
+    }
+  }
+    `.trim());
+
+    // src/app/componentes/class-detail/class-detail.component.html
+    zip.folder("src/app/componentes/class-detail")?.file("class-detail.component.html", `
+  <div *ngIf="classData" class="class-detail">
+    <h2>{{ classData.nombre !== '{nombre}' ? classData.nombre : 'Sin nombre' }}</h2>
+    <p><strong>Estereotipo:</strong> {{ classData.estereotipo || 'N/A' }}</p>
+    <div>
+      <h3>Atributos</h3>
+      <div *ngFor="let attr of attributes" class="attribute-field">
+        <label>{{ attr }}</label>
+        <input type="text" [(ngModel)]="attributeValues[attr]" placeholder="Enter {{ attr }}" />
+      </div>
+    </div>
+    <h3>Método</h3>
+    <p>{{ classData.metodo !== '{metodo}' ? classData.metodo : 'Sin métodos' }}</p>
+    <button (click)="goBack()">Back to Diagram</button>
+  </div>
+  <div *ngIf="!classData">
+    <p>Class not found.</p>
+  </div>
+    `.trim());
+
+    // src/app/componentes/class-detail/class-detail.component.css
+    zip.folder("src/app/componentes/class-detail")?.file("class-detail.component.css", `
+  .class-detail {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  .attribute-field {
+    margin-bottom: 10px;
+  }
+  label {
+    display: inline-block;
+    width: 150px;
+    font-weight: bold;
+  }
+  input {
+    padding: 5px;
+    width: 200px;
+  }
+  button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #0056b3;
+  }
+    `.trim());
+
+    // Generate and download the ZIP
+    zip.generateAsync({ type: "blob" }).then(function(content) {
+      saveAs(content, "uml-diagram.zip");
+    });
+  }
+
+  function importar() {
+    try {
+      let file = campoParaSubirArchivo.files;
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        let parser = new DOMParser();
+        let xmlDoc = parser.parseFromString(event.target.result, "text/xml");
+
+        // Ejemplo: Extraer elementos de clases desde el XML
+        let clases = xmlDoc.getElementsByTagName("UML:Class");
+        let objetosRecuperados = [];
+
+        for (let i = 0; i < clases.length; i++) {
+          let nombreClase = clases[i].getAttribute("name");
+          // Puedes seguir extrayendo atributos, métodos, etc.
+          objetosRecuperados.push({
+            nombre: nombreClase,
+            // Otros atributos que quieras extraer
+          });
+        }
+
+        // Luego de procesar las clases, puedes usar tu función 'draw2'
+        console.log(objetosRecuperados);
+        draw2(objetosRecuperados); // Ajusta el método a lo que necesites dibujar.
+      };
+
+      reader.readAsText(file[0]); // Lee el archivo XML.
+      campoParaSubirArchivo.value = null;
+      ocultarModalImportar(); // Oculta el modal después de la importación.
+
+    } catch (error) {
+      alert('Ocurrió un error al importar');
+      console.error(error);
+    }
+  }
+
+
+</script>
