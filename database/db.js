@@ -1,10 +1,10 @@
 const { Client } = require('pg')
 /*const connection = new Client({
   user: 'postgres',        // Usuario de tu PostgreSQL local
-  password: 'admin123',        // Contraseña que configuraste
+  password: '1234',        // Contraseña que configuraste
   host: 'localhost',       // Servidor local
   port: 5432,             // Puerto por defecto de PostgreSQL
-  database: 'diagramador', // Nombre de tu BD local
+  database: 'pizarraColaborativa', // Nombre de tu BD local
 });
 
 // Conectar y exportar
@@ -15,15 +15,15 @@ connection.connect()
   .catch((error) => {
     console.error('❌ Error al conectar a PostgreSQL local:', error);
   });
-*/
-module.exports = connection;
+
+module.exports = connection;*/
 
 //const mysql = require('mysql')
 
-const client = new Client("postgresql://diagramclases_user:s36TodZh504VudSM0lhYTDu5Qz5iQfWm@dpg-crs8rtggph6c738r0o9g-a.oregon-postgres.render.com/diagramclases")*/
+/*const client = new Client("postgresql://diagramclases_user:s36TodZh504VudSM0lhYTDu5Qz5iQfWm@dpg-crs8rtggph6c738r0o9g-a.oregon-postgres.render.com/diagramclases")*/
 
 const conection = new Client({
-  connectionString: "postgresql://diagrama_de_clase_user:xZrMb59nr0S7INchuPXgHMDtR4iV30ZJ@dpg-cu5g402j1k6c73esk3bg-a.oregon-postgres.render.com/diagrama_de_clase",
+  connectionString: "postgresql://db_sw1_user:ZyTsQuc3fIa58qA111nQEsG1YLT75WqJ@dpg-d096e2re5dus738b1g7g-a/db_sw1",
   ssl: {
     rejectUnauthorized: false
   }
