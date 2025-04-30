@@ -1,5 +1,5 @@
 const { Client } = require('pg')
-const connection = new Client({
+/*const connection = new Client({
   user: 'postgres',        // Usuario de tu PostgreSQL local
   password: 'admin123',        // Contraseña que configuraste
   host: 'localhost',       // Servidor local
@@ -15,14 +15,14 @@ connection.connect()
   .catch((error) => {
     console.error('❌ Error al conectar a PostgreSQL local:', error);
   });
-
+*/
 module.exports = connection;
 
 //const mysql = require('mysql')
 
-/*const client = new Client("postgresql://diagramclases_user:s36TodZh504VudSM0lhYTDu5Qz5iQfWm@dpg-crs8rtggph6c738r0o9g-a.oregon-postgres.render.com/diagramclases")*/
+const client = new Client("postgresql://diagramclases_user:s36TodZh504VudSM0lhYTDu5Qz5iQfWm@dpg-crs8rtggph6c738r0o9g-a.oregon-postgres.render.com/diagramclases")*/
 
-/*const conection = new Client({
+const conection = new Client({
   connectionString: "postgresql://diagrama_de_clase_user:xZrMb59nr0S7INchuPXgHMDtR4iV30ZJ@dpg-cu5g402j1k6c73esk3bg-a.oregon-postgres.render.com/diagrama_de_clase",
   ssl: {
     rejectUnauthorized: false
@@ -33,7 +33,7 @@ conection.connect().then(() => {
 }).catch(error => {
   console.error('Error al conectar a la base de datos:', error);
 });
-module.exports = conection*/
+module.exports = conection
 /*
 const 
  = mysql.createConnection({
